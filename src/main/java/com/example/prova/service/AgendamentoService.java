@@ -21,10 +21,6 @@ public class AgendamentoService {
         return agendamentoRepository.save(agendamento);
     }
 
-    public List<Agendamento> listarTodos() {
-        return agendamentoRepository.findAll();
-    }
-
     public Optional<Agendamento> buscarPorId(Long id) {
         return agendamentoRepository.findById(id);
     }
@@ -35,13 +31,22 @@ public class AgendamentoService {
     }
 
     public Agendamento atualizar(Long id, Agendamento novoAgendamento) {
-        return agendamentoRepository.findById(id)
-                .map(ag -> {
-                    ag.setDataHora(novoAgendamento.getDataHora());
-                    ag.setTipoServico(novoAgendamento.getTipoServico());
-                    ag.setNomePet(novoAgendamento.getNomePet());
-                    return agendamentoRepository.save(ag);
-                }).orElseThrow(() -> new RuntimeException("Agendamento não encontrado"));
+        Agendamento agendamento = agendamentoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Agendamento não encontrado"));
+
+        if(novoAgendamento.getNomePet() != null) {
+            agendamento.setNomePet(novoAgendamento.getNomePet());
+        }
+
+        if(novoAgendamento.getTutor() != null){
+            agendamento.setTutor(novoAgendamento.getTutor());
+        }
+
+        if(novoAgendamento.getTipoServico() != null){
+            agendamento.setTipoServico(novoAgendamento.getTipoServico());
+        }
+
+        return agendamentoRepository.save(agendamento);
     }
 
     public void cancelar(Long id) {

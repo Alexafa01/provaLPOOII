@@ -23,7 +23,13 @@ public class PetService {
     }
 
     public Pet pegarPet(int id) {
-        return petRepositorio.getReferenceById(id);
+        Optional<Pet> petExistente = petRepositorio.findById(id);
+
+        if (!petExistente.isPresent()) {
+            throw new RuntimeException("Pet não encontrado com ID: " + id);
+        }
+
+        return petExistente.get();
     }
 
     public Pet atualizarPet(int id, Pet pet) {
@@ -34,8 +40,20 @@ public class PetService {
             throw new RuntimeException("Pet não encontrado com ID: " + id);
         }
 
-        pet.setId(id);
-        return petRepositorio.save(pet);
+        if(pet.getRaca() != null){
+            petExistente.get().setRaca(pet.getRaca());
+        }
+        if(pet.getCor() != null){
+            petExistente.get().setCor(pet.getCor());
+        }
+        if(pet.getGenero() != null){
+            petExistente.get().setGenero(pet.getGenero());
+        }
+        if(pet.getProprietario() != null){
+            petExistente.get().setProprietario(pet.getProprietario());
+        }
+
+        return petRepositorio.save(petExistente.get());
     }
 
     public void deletarPet(int id, Pet pet) {

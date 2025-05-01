@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 public class Agendamento {
@@ -24,20 +26,18 @@ public class Agendamento {
     @Column
     private LocalDateTime dataHora;
 
-    public Agendamento(Long id, String nomePet, String tutor, String tipoServico, LocalDateTime dataHora) {
-        this.id = id;
+    @OneToMany(mappedBy = "agendamento", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Pet> pets = new ArrayList<>();
+
+    public Agendamento() {
+    }
+
+    public Agendamento(String nomePet, String tutor, String tipoServico, LocalDateTime dataHora, List<Pet> pets) {
         this.nomePet = nomePet;
         this.tutor = tutor;
         this.tipoServico = tipoServico;
         this.dataHora = dataHora;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
+        this.pets = pets;
     }
 
     public String getNomePet() {
@@ -70,5 +70,13 @@ public class Agendamento {
 
     public void setDataHora(LocalDateTime dataHora) {
         this.dataHora = dataHora;
+    }
+
+    public List<Pet> getPets() {
+        return pets;
+    }
+
+    public void setPets(List<Pet> pets) {
+        this.pets = pets;
     }
 }
