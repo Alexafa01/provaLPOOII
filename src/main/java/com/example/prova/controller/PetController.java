@@ -17,13 +17,6 @@ public class PetController {
     @Autowired
     PetService petService;
 
-    @PostMapping
-    public ResponseEntity<Pet> inserirPets(@RequestBody Pet pet) {
-
-        Pet petData = petService.savePetData(pet);
-        return new ResponseEntity(petData, HttpStatus.OK);
-    }
-
     @GetMapping
     public ResponseEntity<List<Pet>> buscarPet() {
         List<Pet> pets = petService.pegarTodosPets();
@@ -31,19 +24,26 @@ public class PetController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<List<Pet>> buscarPetPorId(@PathVariable int id) {
-        Pet pets = petService.pegarPet(id);
-        return new ResponseEntity(pets, HttpStatus.OK);
+    public ResponseEntity<Pet> buscarPetPorId(@PathVariable String id) {
+        Pet pet = petService.pegarPet(id);
+        return new ResponseEntity(pet, HttpStatus.OK);
+    }
+
+    @PostMapping
+    public ResponseEntity<Pet> inserirPets(@RequestBody Pet pet) {
+
+        Pet petData = petService.savePetData(pet);
+        return new ResponseEntity(petData, HttpStatus.OK);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Pet> atualizarPets(@PathVariable int id, @RequestBody Pet pet) {
+    public ResponseEntity<Pet> atualizarPets(@PathVariable String id, @RequestBody Pet pet) {
         Pet pets = petService.atualizarPet(id, pet);
         return new ResponseEntity<>(pets, HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
-    public void deletarPets(@PathVariable int id, @RequestBody Pet pet) {
+    public void deletarPets(@PathVariable String id, @RequestBody Pet pet) {
         petService.deletarPet(id, pet);
 
     }

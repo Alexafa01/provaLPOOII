@@ -9,7 +9,7 @@ public class Pet {
     @Id
     @Column
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Long id;
     
     @Column
     private String raca;
@@ -23,19 +23,22 @@ public class Pet {
     @Column
     private String proprietario;
 
-    @ManyToOne
-    @JoinColumn(name = "agendamento_id")
-    private Agendamento agendamento;
-
     public Pet() {
     }
 
-    public Pet(String raca, String cor, String genero, String proprietario, Agendamento agendamento) {
+    public Pet(String raca, String cor, String genero, String proprietario) {
         this.raca = raca;
         this.cor = cor;
         this.genero = genero;
         this.proprietario = proprietario;
-        this.agendamento = agendamento;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getRaca() {
@@ -70,11 +73,4 @@ public class Pet {
         this.proprietario = proprietario;
     }
 
-    public Agendamento getAgendamento() {
-        return agendamento;
-    }
-
-    public void setAgendamento(Agendamento agendamento) {
-        this.agendamento = agendamento;
-    }
 }

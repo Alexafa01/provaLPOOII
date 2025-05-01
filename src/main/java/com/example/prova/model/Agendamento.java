@@ -15,53 +15,29 @@ public class Agendamento {
     private Long id;
 
     @Column
-    private String nomePet;
-
-    @Column
-    private String tutor;
+    private LocalDateTime dataHora;
 
     @Column
     private String tipoServico;
 
-    @Column
-    private LocalDateTime dataHora;
-
-    @OneToMany(mappedBy = "agendamento", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Pet> pets = new ArrayList<>();
+    @ManyToOne
+    @JoinColumn(name = "pet_id")
+    private Pet pet;
 
     public Agendamento() {
     }
 
-    public Agendamento(String nomePet, String tutor, String tipoServico, LocalDateTime dataHora, List<Pet> pets) {
-        this.nomePet = nomePet;
-        this.tutor = tutor;
+    public Agendamento(String tipoServico, Pet pet) {
         this.tipoServico = tipoServico;
-        this.dataHora = dataHora;
-        this.pets = pets;
+        this.pet = pet;
     }
 
-    public String getNomePet() {
-        return nomePet;
+    public Long getId() {
+        return id;
     }
 
-    public void setNomePet(String nomePet) {
-        this.nomePet = nomePet;
-    }
-
-    public String getTutor() {
-        return tutor;
-    }
-
-    public void setTutor(String tutor) {
-        this.tutor = tutor;
-    }
-
-    public String getTipoServico() {
-        return tipoServico;
-    }
-
-    public void setTipoServico(String tipoServico) {
-        this.tipoServico = tipoServico;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public LocalDateTime getDataHora() {
@@ -72,11 +48,19 @@ public class Agendamento {
         this.dataHora = dataHora;
     }
 
-    public List<Pet> getPets() {
-        return pets;
+    public String getTipoServico() {
+        return tipoServico;
     }
 
-    public void setPets(List<Pet> pets) {
-        this.pets = pets;
+    public void setTipoServico(String tipoServico) {
+        this.tipoServico = tipoServico;
+    }
+
+    public Pet getPet() {
+        return pet;
+    }
+
+    public void setPet(Pet pet) {
+        this.pet = pet;
     }
 }

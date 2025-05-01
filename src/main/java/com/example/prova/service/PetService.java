@@ -22,8 +22,8 @@ public class PetService {
         return petRepositorio.findAll();
     }
 
-    public Pet pegarPet(int id) {
-        Optional<Pet> petExistente = petRepositorio.findById(id);
+    public Pet pegarPet(String id) {
+        Optional<Pet> petExistente = petRepositorio.findById(Long.parseLong(id));
 
         if (!petExistente.isPresent()) {
             throw new RuntimeException("Pet não encontrado com ID: " + id);
@@ -32,9 +32,9 @@ public class PetService {
         return petExistente.get();
     }
 
-    public Pet atualizarPet(int id, Pet pet) {
+    public Pet atualizarPet(String id, Pet pet) {
 
-        Optional<Pet> petExistente = petRepositorio.findById(id);
+        Optional<Pet> petExistente = petRepositorio.findById(Long.parseLong(id));
 
         if (!petExistente.isPresent()) {
             throw new RuntimeException("Pet não encontrado com ID: " + id);
@@ -56,11 +56,13 @@ public class PetService {
         return petRepositorio.save(petExistente.get());
     }
 
-    public void deletarPet(int id, Pet pet) {
-        Pet petdata = petRepositorio.getReferenceById(id);
-        if (petdata == null) {
-            new Exception("Pet não encontrado");
+    public void deletarPet(String id, Pet pet) {
+        Optional<Pet> petExistente = petRepositorio.findById(Long.parseLong(id));
+
+        if (!petExistente.isPresent()) {
+            throw new RuntimeException("Pet não encontrado com ID: " + id);
         }
-        petRepositorio.deleteById(id);
+
+        petRepositorio.deleteById(Long.parseLong(id));
     }
 }

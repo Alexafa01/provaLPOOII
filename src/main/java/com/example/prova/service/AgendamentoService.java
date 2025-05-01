@@ -1,7 +1,10 @@
 package com.example.prova.service;
 
+import com.example.prova.controller.dto.AtualizarAgendametoDTO;
 import com.example.prova.model.Agendamento;
+import com.example.prova.model.Pet;
 import com.example.prova.repositorio.AgendamentoRepositorio;
+import com.example.prova.repositorio.PetRepositorio;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,61 +19,48 @@ public class AgendamentoService {
     @Autowired
     private AgendamentoRepositorio agendamentoRepository;
 
+    @Autowired
+    private PetRepositorio petRepositorio;
 
-    public Agendamento salvar(Agendamento agendamento) {
-        return agendamentoRepository.save(agendamento);
+    public List<Agendamento> listarAgendamentos() {
+        return agendamentoRepository.findAll();
     }
 
-    public Optional<Agendamento> buscarPorId(Long id) {
-        return agendamentoRepository.findById(id);
+    public Optional<Agendamento> buscarPorId(String id) {
+        return agendamentoRepository.findById(Long.parseLong(id));
     }
 
-    public Agendamento agendar(Agendamento agendamento) {
+    public Agendamento novoAgendamento(Agendamento agendamento) {
+        Optional<Pet> petExistente = petRepositorio.findById(agendamento.getPet().getId());
+
+        if(!petExistente.isPresent()){
+            throw new RuntimeException("ID de pet inexistente");
+        }
+
         agendamento.setDataHora(LocalDateTime.now());
-        return agendamentoRepository.save(agendamento);
-    }
-
-    public Agendamento atualizar(Long id, Agendamento novoAgendamento) {
-        Agendamento agendamento = agendamentoRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Agendamento não encontrado"));
-
-        if(novoAgendamento.getNomePet() != null) {
-            agendamento.setNomePet(novoAgendamento.getNomePet());
-        }
-
-        if(novoAgendamento.getTutor() != null){
-            agendamento.setTutor(novoAgendamento.getTutor());
-        }
-
-        if(novoAgendamento.getTipoServico() != null){
-            agendamento.setTipoServico(novoAgendamento.getTipoServico());
-        }
+        agendamento.setPet(petExistente.get());
 
         return agendamentoRepository.save(agendamento);
     }
 
-    public void cancelar(Long id) {
-        agendamentoRepository.deleteById(id);
-    }
+    public Agendamento atualizar(String id, AtualizarAgendametoDTO agendamento) {
+        Optional<Agendamento> agendamentoExistente = agendamentoRepository.findById(Long.parseLong(id));
 
-    public double calcularValor(Agendamento agendamento) {
-        LocalDateTime inicio = agendamento.getDataHora();
-        LocalDateTime fim = LocalDateTime.now();
-        long minutos = Duration.between(inicio, fim).toMinutes();
-
-        if (minutos <= 15) {
-            return 0.0;
+        if(!agendamentoExistente.isPresent()){
+            throw new RuntimeException("Agendamento não encontrado com ID:" + id);
         }
 
-        long horas = (long) Math.ceil((double) minutos / 60);
-        return horas * 10.0;
+        if(agendamento.tipoServico() != null){
+            agendamentoExistente.get().setTipoServico(agendamento.tipoServico());
+        }
+
+        return agendamentoRepository.save(agendamentoExistente.get());
     }
 
-    public void deletar(Long id) {
-        // Você pode verificar se o agendamento existe antes de deletar
-        Optional<Agendamento> existente = agendamentoRepository.findById(id);
+    public void deletar(String id) {
+        Optional<Agendamento> existente = agendamentoRepository.findById(Long.parseLong(id));
         if (existente.isPresent()) {
-            agendamentoRepository.deleteById(id);
+            agendamentoRepository.deleteById(Long.parseLong(id));
         } else {
             throw new RuntimeException("Agendamento não encontrado com ID: " + id);
         }
